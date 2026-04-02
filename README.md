@@ -34,6 +34,72 @@ Different users in an organization need different levels of access to financial 
 
 ---
 
+## Architecture
+ 
+The project follows a strict **5-layer architecture** where each layer has exactly one responsibility:
+ 
+```
+Request
+   │
+   ▼
+Routes          → Define URL paths, attach middleware and controllers
+   │
+   ▼
+Middleware       → authenticate (JWT) → authorizeRoles (RBAC) → validate (input)
+   │
+   ▼
+Controllers      → Handle HTTP request/response only, no business logic
+   │
+   ▼
+Services         → All business logic, database queries, aggregations
+   │
+   ▼
+Models           → Mongoose schemas, validation rules, database hooks
+   │
+   ▼
+MongoDB
+```
+ 
+### Project Structure
+ 
+```
+src/
+├── config/
+│   └── db.js                    # MongoDB connection
+├── models/
+│   ├── User.model.js            # User schema with bcrypt hook
+│   ├── FinancialRecord.model.js # Record schema with indexes
+│   └── RefreshToken.model.js    # Refresh token with TTL index
+├── controllers/
+│   ├── auth.controller.js
+│   ├── user.controller.js
+│   ├── record.controller.js
+│   └── dashboard.controller.js
+├── services/
+│   ├── auth.service.js
+│   ├── user.service.js
+│   ├── record.service.js
+│   └── dashboard.service.js
+├── middleware/
+│   ├── authenticate.js          # JWT verification + live user check
+│   ├── authorizeRoles.js        # Role-based access enforcement
+│   └── errorHandler.js          # Global error handler
+├── routes/
+│   ├── auth.routes.js
+│   ├── user.routes.js
+│   ├── record.routes.js
+│   └── dashboard.routes.js
+├── validators/
+│   ├── auth.validator.js
+│   └── record.validator.js
+└── utils/
+    ├── ApiError.js              # Custom error class
+    ├── ApiResponse.js           # Consistent response wrapper
+    └── generateTokens.js        # Access + refresh token helpers
+```
+ 
+---
+
 ## API Reference
 
 ### Authentication
