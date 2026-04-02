@@ -2,7 +2,7 @@
 
 A production-ready RESTful backend API for a Finance Dashboard system, built with **Node.js**, **Express.js**, and **MongoDB**. The system supports multi-role user access, complete financial record management, role-based access control, and aggregation-powered dashboard analytics — all secured with a **JWT dual-token authentication strategy** using access tokens and refresh tokens.
 
->  **Live API:** `https://your-deployed-link.onrender.com`
+>  **Live API:** `https://finance-dashboard-system-9enh.onrender.com`
 
 ---
 
@@ -29,9 +29,6 @@ Different users in an organization need different levels of access to financial 
 | MongoDB + Mongoose | Database and ODM with schema validation |
 | JWT (jsonwebtoken) | Stateless access token authentication |
 | bcryptjs | Secure password hashing (12 rounds) |
-| express-validator | Request body validation |
-| cookie-parser | httpOnly cookie support for refresh tokens |
-| helmet | HTTP security headers |
 | cors | Cross-origin request support |
 | Render | Cloud deployment platform |
 
@@ -84,7 +81,7 @@ The API is live and fully testable. You can use **Postman**, **Insomnia**, **Thu
 ### Base URL
 
 ```
-https://your-deployed-link.onrender.com
+https://finance-dashboard-system-9enh.onrender.com
 ```
 
 **Required environment variables:**
