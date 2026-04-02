@@ -150,6 +150,193 @@ The API is live and fully testable. You can use **Postman**, **Insomnia**, **Thu
 https://finance-dashboard-system-9enh.onrender.com
 ```
 
+### Step 1 — Register a user
+ 
+```http
+POST /api/auth/register
+Content-Type: application/json
+ 
+{
+  "name": "John Admin",
+  "email": "admin@example.com",
+  "password": "password123",
+  "role": "admin"
+}
+```
+ 
+**Response:**
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": { "id": "...", "name": "John Admin", "email": "admin@example.com", "role": "admin" },
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+  }
+}
+```
+ 
+### Step 2 — Login
+ 
+```http
+POST /api/auth/login
+Content-Type: application/json
+ 
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
+```
+ 
+Copy the `accessToken` from the response.
+ 
+### Step 3 — Set Authorization Header
+ 
+For all protected routes, add this header:
+ 
+```
+Authorization: Bearer <paste_access_token_here>
+```
+ 
+### Step 4 — Create a financial record (admin only)
+ 
+```http
+POST /api/records
+Authorization: Bearer <access_token>
+Content-Type: application/json
+ 
+{
+  "amount": 50000,
+  "type": "income",
+  "category": "Salary",
+  "date": "2025-01-15",
+  "description": "Monthly salary credit"
+}
+```
+ 
+### Step 5 — View all records
+ 
+```http
+GET /api/records
+Authorization: Bearer <access_token>
+```
+ 
+### Step 6 — View dashboard summary
+ 
+```http
+GET /api/dashboard/summary
+Authorization: Bearer <access_token>
+```
+ 
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "totalIncome": 50000,
+    "totalExpenses": 12000,
+    "netBalance": 38000,
+    "totalRecords": 5
+  }
+}
+```
+ 
+### Step 7 — Refresh your access token
+ 
+```http
+POST /api/auth/refresh
+Content-Type: application/json
+ 
+{
+  "refreshToken": "<paste_refresh_token_here>"
+}
+```
+ 
+### Step 8 — Test role restrictions
+ 
+Register a viewer account and try to create a record — you will receive a `403 Forbidden` response, confirming RBAC is enforced correctly.
+ 
+```http
+POST /api/auth/register
+Content-Type: application/json
+ 
+{
+  "name": "Jane Viewer",
+  "email": "viewer@example.com",
+  "password": "password123",
+  "role": "viewer"
+}
+```
+ 
+Then attempt:
+ 
+```http
+POST /api/records
+Authorization: Bearer <viewer_access_token>
+Content-Type: application/json
+ 
+{
+  "amount": 1000,
+  "type": "expense",
+  "category": "Food"
+}
+```
+ 
+Expected response:
+ 
+```json
+{
+  "success": false,
+  "message": "Role 'viewer' is not allowed to perform this action"
+}
+```
+ 
+---
+ 
+## Response Format
+ 
+Every API response — success or error — follows the same consistent structure:
+ 
+**Success:**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Records fetched",
+  "data": { ... }
+}
+```
+ 
+**Error:**
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "errors": ["Amount must be a positive number"]
+}
+```
+
+---
+
+## Running Locally
+ 
+```bash
+# Clone the repository
+git clone https://github.com/your-username/finance-dashboard-backend.git
+cd finance-dashboard-backend
+ 
+# Install dependencies
+npm install
+ 
+# Create environment file
+cp .env.example .env
+# Fill in your MONGO_URI and JWT secrets in .env
+ 
+# Start development server
+npm run dev
+```
+
 **Required environment variables:**
 
 ```env
